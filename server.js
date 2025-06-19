@@ -67,6 +67,7 @@ app.post("/login", async (req, res) => {
         //Eliminar de la variable user, el apartado 'psw'
         const {psw: _, ...publicuser} = user
         //Enviar el token y los datos del user
+        //Envio de datos Cifrados y Sin Cifras a causa de verificaciones
         res.json({
             token,
             user:publicuser
@@ -76,6 +77,6 @@ app.post("/login", async (req, res) => {
 
 
 // Escuchar en todas las interfaces
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
     console.log(`Servidor Corriendo en http://0.0.0.0:${PORT}`);
 });

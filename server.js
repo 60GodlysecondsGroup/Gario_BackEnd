@@ -56,7 +56,7 @@ app.post("/login", async (req, res) => {
             return res.status(401).json({ mensaje: "Email desconocido" });
         }
         //Guardar en la variable User, los datos del usuario
-        const user = resultado[0]
+        const user = resultado[0][0]
         //el .compare, cifra la password recibida, y la compara con la password cifrada de la base de datos, para luego retornar un true o false que es guardado en la variable match 
         const match = await bcrypt.compare(psw, user.psw)
         //Si es diferente de True, Significa que la password es incorrecta, Status 401 'No Autorizado

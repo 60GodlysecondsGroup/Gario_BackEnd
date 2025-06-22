@@ -1,9 +1,10 @@
 const mysql = require("mysql2");
 
+//Esto debe ir en variables de entorno
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "cr434953",
+    password: "Cr434953",
     database: "gario"
 });
 

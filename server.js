@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const multer = require('multer');
-const cookieParser = require('cookie-parser'); //Desinstalar
 const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');

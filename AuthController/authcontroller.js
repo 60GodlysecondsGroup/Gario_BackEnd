@@ -83,5 +83,24 @@ router.get("/me/monto", verifyToken, async(req, res, next)=>{
     })
 })
 
+//EndPoint para obtener los gastos totales del mes actual
+router.get("/me/monto/ultimomes", verifyToken, async(req, res, next)=>{
+    connection.query("CALL SearchUltimoMesGastos(?)", [req.user.id_user], (err, resultado)=>{
+        //Manejo de Errores, Fallo de servidor O respuesta vacía
+        if(err) return res.status(500).json({ mensaje: "Error en el servidor" });
+        //Envío de datos
+        res.status(200).send(resultado[0])
+    })
+})
+
+//EndPoint para obtener el ultimo ingreso Fijo, gasto Fijo y gasto Hormiga del usuario
+router.get("/me/monto/ultimosmovimientos", verifyToken, async(req, res, next)=>{
+    connection.query("CALL SearchUltimos3Movimientos(?)", [req.user.id_user], (err, resultado)=>{
+        //Manejo de Errores, Fallo de servidor O respuesta vacía
+        if(err) return res.status(500).json({ mensaje: "Error en el servidor" });
+        //Envío de datos
+        res.status(200).send(resultado[0])
+    })
+})
 //Exportar todos los EndPoints
 module.exports = router;

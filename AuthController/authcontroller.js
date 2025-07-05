@@ -53,7 +53,7 @@ router.post("/login", async (req, res) => {
         //Creación del Token 
         //Recomendación: Las llaves deben usar los nombres correspondientes de las columnas de la db
         //86400 == 24hrs
-        const token = jwt.sign({id_user:user.id_user, username:user.username, email:user.email, age:user.age}, SECRET_KEY, {expiresIn:'86400'})
+        const token = jwt.sign({id_user:user.id_user, username:user.username, email:user.email, age:user.age}, SECRET_KEY, {expiresIn:'1h'})
         //Enviar el token que contiene los datos del user
         res.status(200).send({ auth: true, token: token });
     })
@@ -78,14 +78,14 @@ router.get("/me/monto", verifyToken, async(req, res, next)=>{
         //Manejo de Errores, Fallo de servidor O respuesta vacía
         if(err) return res.status(500).json({ mensaje: "Error en el servidor" });
         if(resultado.length === 0) return res.status(401).json({ mensaje: "User sin Monto" });
-        //Envío de datos
+        //Envío de datos    
         res.status(200).send(resultado[0])
     })
 })
 
 //EndPoint para obtener los gastos totales del mes actual
 router.get("/me/monto/ultimomes", verifyToken, async(req, res, next)=>{
-    connection.query("CALL SearchUltimoMesGastos(?)", [req.user.id_user], (err, resultado)=>{
+    connection.query("CALL SearchGastosMesActual(?)", [req.user.id_user], (err, resultado)=>{
         //Manejo de Errores, Fallo de servidor O respuesta vacía
         if(err) return res.status(500).json({ mensaje: "Error en el servidor" });
         //Envío de datos
@@ -102,5 +102,131 @@ router.get("/me/monto/ultimosmovimientos", verifyToken, async(req, res, next)=>{
         res.status(200).send(resultado[0])
     })
 })
+
+//EndPoint para Registrar un Gasto
+router.post("/registerGasto", verifyToken, async(req, res, next)=>{
+    
+    const {gasto_tipo, gasto_categoria, cantidad, descripcion, fechas} = req.body; //El parametro fechas espera un valor tipo JSON_Array
+    
+    //Sí no es un Array O el Array está vacío
+    if(!Array.isArray(fechas) || fechas.length === 0){
+        return res.status(400).json({ mensaje: "Se requiere un arreglo de fechas" });
+    }
+    //Formato de Fechas Valido
+    const formato_fecha = /^\d{4}-\d{2}-\d{2}$/;
+    //Bucle para hacer Revisión de cada fecha
+    for(const fecha of fechas){
+        if (!formato_fecha.test(fecha)) {
+            return res.status(400).json({ mensaje: `Formato inválido para la fecha ${fecha}` });
+        }
+    }
+
+    //JSON.stringify() --> Convertir la Array [] a '[]' para ser aceptada en la db
+    connection.query("CALL RegisterGasto(?,?,?,?,?,?)", [req.user.id_user, gasto_tipo, gasto_categoria, cantidad, descripcion, JSON.stringify(fechas)], async (err, resultado)=>{
+        //Manejo de Errores
+        if(err){
+            // Status 400: Bad Request (fallo en datos enviados)
+            return res.status(400).json({ error: err.sqlMessage });
+        };
+        //Mensaje para verificar que el proceso fué Exitoso
+        //Status 201, Significa que ha sido Correcto la creación de un nuevo recurso
+        res.status(201).json({mensaje: "Gasto Registrado Correctamente"})
+    })
+})
+
+//EndPoint para Registrar Ingresos
+router.post("/registerIngreso", verifyToken, async(req, res, next)=>{
+
+    const {ingreso_tipo, ingreso_categoria, cantidad, descripcion, fechas} = req.body;
+
+    //Sí no es un Array O el Array está vacío
+    if(!Array.isArray(fechas) || fechas.length === 0){
+        return res.status(400).json({ mensaje: "Se requiere un arreglo de fechas" });
+    }
+    //Formato de Fechas Valido
+    const formato_fecha = /^\d{4}-\d{2}-\d{2}$/;
+    //Bucle para hacer Revisión de cada fecha
+    for(const fecha of fechas){
+        if (!formato_fecha.test(fecha)) {
+            return res.status(400).json({ mensaje: `Formato inválido para la fecha ${fecha}` });
+        }
+    }
+
+    connection.query("CALL RegisterIngreso(?,?,?,?,?,?)",[req.user.id_user, ingreso_tipo, ingreso_categoria, cantidad, descripcion, JSON.stringify(fechas)], async (err, resultado)=>{
+        //Manejo de Errores
+        if (err) {
+            // Status 400: Bad Request (fallo en datos enviados)
+            return res.status(400).json({ error: err.sqlMessage });
+        }
+
+        //Status 201, Significa que ha sido Correcto la creación de un nuevo recurso
+        res.status(201).json({mensaje: "Ingreso Registrado Correctamente"})
+    })
+})
+
+//EndPoint para ver los movimientos (gastos e ingresos Totales) de los ultimos 5 años
+router.get("/me/searchMovements/year", verifyToken, async(req, res, next)=>{
+
+    connection.query("CALL movimientos_por_5anios(?)", [req.user.id_user], async(err, resultado)=>{
+        //Manejo de Errores, Fallo de servidor O respuesta vacía
+        if(err) return res.status(500).json({ mensaje: "Error en el servidor" });
+        //Envío de datos
+        res.status(200).send(resultado[0])
+    })
+})
+
+//EndPoint para ver los movimientos (gastos e ingresos Totales) de todos los meses del año vigente
+router.get("/me/searchMovements/month", verifyToken, async(req, res, next)=>{
+
+    connection.query("CALL movimientos_por_mes(?)", [req.user.id_user], async(err, resultado)=>{
+        //Manejo de Errores, Fallo de servidor O respuesta vacía
+        if(err) return res.status(500).json({ mensaje: "Error en el servidor" });
+        //Envío de datos
+        res.status(200).send(resultado[0])
+    })
+})
+
+//EndPoint para ver los movimientos (gastos e ingresos Totales) de las 4 semanas de un mes seleccionado
+router.post("/me/searchMovements/week", verifyToken, async(req, res, next)=>{
+    //Recibir La Fecha (La DB recibe la fecha, toma el Mes y año)
+    const {selectedMonth} = req.body;
+    //Formato YYYY-mm-dd
+    const formato_fecha = /^\d{4}-\d{2}-\d{2}$/;
+    //Verificar que se haya enviado el formato adecuado
+     if (!formato_fecha.test(selectedMonth)) {
+    return res.status(400).json({ mensaje: "Formato de fecha inválido. Usa YYYY-MM-DD" });
+    }
+ 
+    connection.query("CALL movimientos_por_semana(?,?)", [req.user.id_user, selectedMonth], async(err, resultado)=>{
+        //Manejo de Errores, Fallo de servidor O respuesta vacía
+        if(err) return res.status(500).json({ mensaje: "Error en el servidor" });
+        
+        if(resultado[0].length === 0) return res.status(401).json({ mensaje: "Mes Sin Movimientos Registrados" });
+        //Envío de datos
+        res.status(200).send(resultado[0])
+    })
+})
+
+//EndPoint para ver los movimientos (gastos e ingresos Totales) de los días de una semana seleccionada
+router.post("/me/searchMovements/day", verifyToken, async(req, res, next)=>{
+
+    const {selectedWeek} = req.body;
+    //Formato YYYY-mm-dd
+    const formato_fecha = /^\d{4}-\d{2}-\d{2}$/;
+    //Verificar que se haya enviado el formato adecuado
+     if (!formato_fecha.test(selectedWeek)) {
+    return res.status(400).json({ mensaje: "Formato de fecha inválido. Usa YYYY-MM-DD" });
+    }
+
+    connection.query("CALL movimientos_por_dia(?,?)", [req.user.id_user, selectedWeek], async(err, resultado)=>{
+        //Manejo de Errores, Fallo de servidor O respuesta vacía
+        if(err) return res.status(500).json({ mensaje: "Error en el servidor" });
+        
+        if(resultado[0].length === 0) return res.status(401).json({ mensaje: "Semana Sin Movimientos Registrados" });
+        //Envío de datos
+        res.status(200).send(resultado[0])
+    })
+})
+
 //Exportar todos los EndPoints
 module.exports = router;

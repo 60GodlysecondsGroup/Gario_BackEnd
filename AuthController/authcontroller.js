@@ -35,15 +35,11 @@ router.post("/login", async (req, res) => {
     //El Email es irrepetible, por ello, al hacer esta query, ya se sabrá a cual user se está refiriendo
     connection.query("CALL SearchEmail(?)", [email], async (err, resultado) =>{
         //Manejo de Errores
-        //Status 500, Error del Servidor
+        //Status 401, Email No Autorizado/No Encontrado 
         if (err) {
-            console.error(err);
-            return res.status(500).json({ mensaje: "Error en el servidor" });
+            return res.status(401).json({ mensaje: err.sqlMessage });
         }
-        //Status 401, Significa que no está Autorizado
-        if (resultado.length === 0) {
-            return res.status(401).json({ mensaje: "Email desconocido" });
-        }
+       
         //Guardar en la variable User, los datos del usuario
         const user = resultado[0][0]
         //el .compare, cifra la password recibida, y la compara con la password cifrada de la base de datos, para luego retornar un true o false que es guardado en la variable match 

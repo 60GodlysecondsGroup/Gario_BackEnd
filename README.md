@@ -7,7 +7,7 @@ Proceso de Instalación:
 3. Abrir una terminal dentro del proyecto
     - Escribir los comandos
         - npm install
-        - npm install express cors multer path fs uuid jsonwebtoken bcryptjs mysql2
+        - npm install express cors multer path fs uuid jsonwebtoken bcryptjs mysql2 Joi
 4. En la ruta /DATABASE/Connect.js
     - Agregar los datos correspondientes
 5. Abrir el Puerto 3000

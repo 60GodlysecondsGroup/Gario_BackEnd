@@ -4,7 +4,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
-const AuthController = require('./AuthController/authcontroller.js');
+const AuthRoutes = require('./Routes/auth.routes.js');
+const movementsRoutes = require('./Routes/movimiento.routes.js')
 
 const app = express();
 const PORT = 3000;
@@ -12,8 +13,11 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-//Uso de los endpoints de usuario
-app.use('/user', AuthController);
+//EndPoints de Autorizacion
+app.use('/user', AuthRoutes);
+
+//EndPoints de Movimientos
+app.use('/movimientos', movementsRoutes);
 
 
 // Escuchar en todas las interfaces

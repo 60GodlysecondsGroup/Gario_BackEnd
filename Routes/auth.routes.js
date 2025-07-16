@@ -4,12 +4,9 @@ const verifyToken = require("../Middlewares/verifytoken.js");
 const AuthController = require("../Controllers/auth.controller.js");
 
 //EndPoint Para Registrarse
-//Procedure & Bcrypt
-//13/07/2025 Empezamos a Organizar (Y Aprender) el Codigo
 router.post("/signup", AuthController.signup);
 
 //EndPoint para Iniciar Sesión
-//JWT & Bcrypt
 router.post("/login", AuthController.login)
 
 //EndPoint de "Cerrar Sesión"

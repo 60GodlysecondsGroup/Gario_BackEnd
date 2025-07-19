@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const verifyToken = require("../Middlewares/verifytoken.js");
-const {ValidateDateArray, ValidateWeek, ValidateMonth} = require("../Middlewares/validate.date.js")
+const validate = require("../Middlewares/validate.js");
+const {IngresoSchema, GastoSchema, MonthSchema, WeekSchema} = require("../Validations/movimiento.schema.js")
 const MovementController = require("../Controllers/movimiento.controller.js");
 
 
@@ -21,16 +22,16 @@ router.get("/lastfiveyears", verifyToken, MovementController.Year)
 router.get("/month", verifyToken, MovementController.Month)
 
 //EndPoint para ver los movimientos (gastos e ingresos Totales) de las 4 semanas de un mes seleccionado
-router.post("/week", verifyToken, ValidateMonth, MovementController.Week)
+router.post("/week", verifyToken, validate(MonthSchema), MovementController.Week)
 
 //EndPoint para ver los movimientos (gastos e ingresos Totales) de los días de una semana seleccionada
-router.post("/day", verifyToken, ValidateWeek, MovementController.Day)
+router.post("/day", verifyToken, validate(WeekSchema), MovementController.Day)
 
 //EndPoint para Registrar un Gasto
-router.post("/Gasto", verifyToken, ValidateDateArray, MovementController.Gasto)
+router.post("/Gasto", verifyToken, validate(GastoSchema), MovementController.Gasto)
 
 //EndPoint para Registrar Ingresos
-router.post("/Ingreso", verifyToken, ValidateDateArray, MovementController.Ingreso)
+router.post("/Ingreso", verifyToken, validate(IngresoSchema), MovementController.Ingreso)
 
 //Exportar todos los EndPoints
 module.exports = router;

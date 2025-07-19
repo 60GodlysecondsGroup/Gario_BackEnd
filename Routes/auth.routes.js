@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const verifyToken = require("../Middlewares/verifytoken.js");
+const validate = require("../Middlewares/validate.js");
+const {SingUpSchema,LogInSchema} = require("../Validations/auth.schema.js")
 const AuthController = require("../Controllers/auth.controller.js");
 
 //EndPoint Para Registrarse
-router.post("/signup", AuthController.signup);
+router.post("/signup", validate(SingUpSchema), AuthController.signup);
 
 //EndPoint para Iniciar Sesión
-router.post("/login", AuthController.login)
+router.post("/login", validate(LogInSchema), AuthController.login)
 
 //EndPoint de "Cerrar Sesión"
 //Lo tenemos para llevar un registro cuando el user haga LogOut

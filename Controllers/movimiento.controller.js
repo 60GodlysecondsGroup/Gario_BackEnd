@@ -1,4 +1,3 @@
-const connection = require("../DATABASE/Connect.js");
 const movimientoservice = require("../Services/movimiento.service.js")
 
 const MovementController = {
@@ -41,7 +40,7 @@ const MovementController = {
             //Debe Llegar Una Fecha, y se extraerá su Mes
             const {selectedMonth} = req.body;
 
-            const [resultado] = await movimientoservice.Month(req.user.id_user, selectedMonth);
+            const [resultado] = await movimientoservice.Week(req.user.id_user, selectedMonth);
             //Condicional Para Saber Si No Hay Registros Encontrados
             if(resultado.length === 0) return res.status(401).json({mensaje: "Mes Sin Movimientos Registrados"});
             res.status(200).send(resultado)

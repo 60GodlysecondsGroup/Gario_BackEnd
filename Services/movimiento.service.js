@@ -84,6 +84,14 @@ const Day = async(id_user, selectedWeek)=>{
     return result;
 }
 
+const historial = async(ValorMin, ValorMax, FechaMin, FechaMax, id_user, TipoConsulta)=>{
+    const [result] = await connection.query(
+        "CALL search_historial(?,?,?,?,?,?)",
+        [ValorMin, ValorMax, FechaMin, FechaMax, id_user, TipoConsulta]
+    );
+    return result;
+}
+
 module.exports = {
     RegisterIngreso,
     RegisterGasto,
@@ -93,5 +101,6 @@ module.exports = {
     Year,
     Month,
     Week,
-    Day
+    Day,
+    historial
 }

@@ -28,10 +28,19 @@ const WeekSchema = Joi.object({
     selectedWeek: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required()
 });
 
+const HistorialSchema = Joi.object({
+    ValorMin: Joi.number().required(),
+    ValorMax: Joi.number().required(),
+    FechaMin: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required(),
+    FechaMax: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required(),
+    TipoConsulta: Joi.number().integer().required()
+});
+
 
 module.exports = {
     IngresoSchema,
     GastoSchema,
     WeekSchema,
-    MonthSchema
+    MonthSchema,
+    HistorialSchema
 }

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const verifyToken = require("../Middlewares/verifytoken.js");
 const validate = require("../Middlewares/validate.js");
-const {IngresoSchema, GastoSchema, MonthSchema, WeekSchema} = require("../Validations/movimiento.schema.js")
+const {IngresoSchema, GastoSchema, MonthSchema, WeekSchema, HistorialSchema} = require("../Validations/movimiento.schema.js")
 const MovementController = require("../Controllers/movimiento.controller.js");
 
 
@@ -32,6 +32,9 @@ router.post("/Gasto", verifyToken, validate(GastoSchema), MovementController.Gas
 
 //EndPoint para Registrar Ingresos
 router.post("/Ingreso", verifyToken, validate(IngresoSchema), MovementController.Ingreso)
+
+//EndPoint para ver historial de Movimientos
+router.post("/historial", verifyToken, validate(HistorialSchema), MovementController.Historial)
 
 //Exportar todos los EndPoints
 module.exports = router;

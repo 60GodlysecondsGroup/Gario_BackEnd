@@ -83,6 +83,18 @@ const MovementController = {
             res.status(201).json({mensaje: "Gasto Registrado Correctamente"})
 
         } catch (err) { return res.status(400).json({ error: err.sqlMessage }); } // Status 400: Bad Request (fallo en datos enviados)
+    },
+    Historial: async(req, res)=>{
+        try {
+            const {ValorMin, ValorMax, FechaMin, FechaMax, TipoConsulta} = req.body
+
+            const [resultado] = await movimientoservice.historial(ValorMin, ValorMax, FechaMin, FechaMax, req.user.id_user, TipoConsulta);
+
+            //Condicional Para Saber Si No Hay Registros Encontrados
+            if(resultado.length === 0) return res.status(401).json({mensaje: "Sin Movimientos Registrados"});
+
+            res.status(200).send(resultado)
+        } catch (err) { return res.status(400).json({error: err.sqlMessage})}
     }
 }
 

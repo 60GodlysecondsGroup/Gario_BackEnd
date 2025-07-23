@@ -3,6 +3,7 @@ const Joi = require("joi")
 const IngresoSchema = Joi.object({
     ingreso_tipo: Joi.number().integer().required(),
     ingreso_categoria: Joi.number().integer().required(),
+    metodo_pago: Joi.number().integer().required(),
     cantidad: Joi.number().min(0.01).required(),
     descripcion: Joi.string().allow('').max(200),
     fechas: Joi.array().items(
@@ -13,6 +14,7 @@ const IngresoSchema = Joi.object({
 const GastoSchema = Joi.object({
     gasto_tipo: Joi.number().integer().required(),
     gasto_categoria: Joi.number().integer().required(),
+    metodo_pago: Joi.number().integer().required(),
     cantidad: Joi.number().min(0.01).required(),
     descripcion: Joi.string().allow('').max(200),
     fechas: Joi.array().items(

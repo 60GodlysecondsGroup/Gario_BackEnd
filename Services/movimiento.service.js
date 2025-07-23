@@ -3,20 +3,20 @@ const connection = require("../DATABASE/Connect.js").promise();
 
 //Uso de Funciones Asincronas
 //Servicio De Registrar Ingresos
-const RegisterIngreso = async(id_user, ingreso_tipo, ingreso_categoria, cantidad, descripcion, fechas)=>{
+const RegisterIngreso = async(id_user, ingreso_tipo, ingreso_categoria, metodo_pago, cantidad, descripcion, fechas)=>{
     const [result] = await connection.query(
-        "CALL RegisterIngreso(?,?,?,?,?,?)",
-        [id_user, ingreso_tipo, ingreso_categoria, cantidad, descripcion, JSON.stringify(fechas)]
+        "CALL RegisterIngreso(?,?,?,?,?,?,?)",
+        [id_user, ingreso_tipo, ingreso_categoria, metodo_pago, cantidad, descripcion, JSON.stringify(fechas)]
     );
     return result;
 };
 
 //Servicio De Registrar Gastos
-const RegisterGasto = async(id_user, gasto_tipo, gasto_categoria, cantidad, descripcion, fechas)=>{
+const RegisterGasto = async(id_user, gasto_tipo, gasto_categoria, metodo_pago, cantidad, descripcion, fechas)=>{
     const [result] = await connection.query(
-        "CALL RegisterGasto(?,?,?,?,?,?)",
+        "CALL RegisterGasto(?,?,?,?,?,?,?)",
         //JSON.stringify() --> Convertir la Array [] a '[]' para ser aceptada en la db
-        [id_user, gasto_tipo, gasto_categoria, cantidad, descripcion, JSON.stringify(fechas)]
+        [id_user, gasto_tipo, gasto_categoria, metodo_pago, cantidad, descripcion, JSON.stringify(fechas)]
     );
     return result;
 }

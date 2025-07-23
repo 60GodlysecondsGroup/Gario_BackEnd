@@ -60,9 +60,9 @@ const MovementController = {
     Ingreso: async(req, res)=>{
         try {
             //El parametro fechas espera un valor tipo JSON_Array
-            const {ingreso_tipo, ingreso_categoria, cantidad, descripcion, fechas} = req.body;
+            const {ingreso_tipo, ingreso_categoria, metodo_pago, cantidad, descripcion, fechas} = req.body;
             //Llamado al Servicio de Registrar Ingresos
-            await movimientoservice.RegisterIngreso(req.user.id_user, ingreso_tipo, ingreso_categoria, cantidad, descripcion, fechas);
+            await movimientoservice.RegisterIngreso(req.user.id_user, ingreso_tipo, ingreso_categoria, metodo_pago, cantidad, descripcion, fechas);
 
             //Mensaje para verificar que el proceso fué Exitoso
             //Status 201, Significa que ha sido Correcto la creación de un nuevo recurso
@@ -74,9 +74,9 @@ const MovementController = {
     Gasto: async(req, res)=>{
         try {
             //El parametro fechas espera un valor tipo JSON_Array
-            const {gasto_tipo, gasto_categoria, cantidad, descripcion, fechas} = req.body; 
+            const {gasto_tipo, gasto_categoria, metodo_pago, cantidad, descripcion, fechas} = req.body; 
             //Llamado al Servicio de Registrar Gastos
-            await movimientoservice.RegisterGasto(req.user.id_user, gasto_tipo, gasto_categoria, cantidad, descripcion, fechas);
+            await movimientoservice.RegisterGasto(req.user.id_user, gasto_tipo, gasto_categoria, metodo_pago, cantidad, descripcion, fechas);
             
             //Mensaje para verificar que el proceso fué Exitoso
             //Status 201, Significa que ha sido Correcto la creación de un nuevo recurso

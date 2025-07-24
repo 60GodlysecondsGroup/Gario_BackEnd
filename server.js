@@ -5,7 +5,8 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const AuthRoutes = require('./Routes/auth.routes.js');
-const movementsRoutes = require('./Routes/movimiento.routes.js')
+const movementsRoutes = require('./Routes/movimiento.routes.js');
+const CatalogoRoutes = require('./Routes/catalogo.routes.js');
 
 const app = express();
 const PORT = 3000;
@@ -18,6 +19,9 @@ app.use('/user', AuthRoutes);
 
 //EndPoints de Movimientos
 app.use('/movimientos', movementsRoutes);
+
+//EndPoints de Catalogo
+app.use('/catalogo', CatalogoRoutes);
 
 
 // Escuchar en todas las interfaces

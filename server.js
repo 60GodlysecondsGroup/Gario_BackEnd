@@ -1,15 +1,12 @@
 const express = require("express");
 const cors = require("cors");
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
+require('dotenv').config();
 const AuthRoutes = require('./Routes/auth.routes.js');
 const movementsRoutes = require('./Routes/movimiento.routes.js');
 const CatalogoRoutes = require('./Routes/catalogo.routes.js');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 app.use(cors());
 app.use(express.json());

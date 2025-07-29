@@ -1,7 +1,7 @@
 const connection = require("../DATABASE/Connect.js").promise();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const {SECRET_KEY} = require("../keys.js");
+require('dotenv').config();
 
 //Servicio de 'Hash', con el objetivo de cifrar la password
 const Hashed = async(password)=>{
@@ -33,17 +33,31 @@ const FindEmail = async(email)=>{
     return result;
 }
 
+//Servicio de Registro del Refresh Token en la Database
+const SaveRefreshToken = async(id_user, token)=>{
+    return await connection.query(
+        "CALL REGISTER_REFRESH_TOKEN(?,?)",
+        [id_user, token]
+    );
+}
+
 //Servicio de Creación del Token 
 //Recomendación: Las llaves deben usar los nombres correspondientes de las columnas de la db
 const GenerateToken = (user)=>{
     return jwt.sign({
         id_user: user.id_user, 
-        username: user.username,
-        email: user.email,
-        age: user.age
     },
-    SECRET_KEY,
-    {expiresIn:'1h'});   
+    process.env.JWT_SECRET,
+    {expiresIn:process.env.JWT_EXPIRES_IN});   
+}
+
+//Servicio de Creación de Refresh Token
+const GenerateRefreshToken = (user)=>{
+    return jwt.sign({
+        id_user: user.id_user, 
+    },
+    process.env.JWT_SECRET,
+    {expiresIn:'7d'});
 }
 
 module.exports = {
@@ -51,5 +65,7 @@ module.exports = {
     ComparePsw,
     SignUp,
     FindEmail,
-    GenerateToken
+    GenerateToken,
+    SaveRefreshToken,
+    GenerateRefreshToken
 }

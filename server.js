@@ -20,6 +20,10 @@ app.use('/movimientos', movementsRoutes);
 //EndPoints de Catalogo
 app.use('/catalogo', CatalogoRoutes);
 
+app.get('/ping', (req, res) => {
+  res.status(200).json({ mensaje: 'pong' });
+});
+
 
 // Escuchar en todas las interfaces
 app.listen(PORT, "0.0.0.0", () => {
